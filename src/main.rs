@@ -1,14 +1,11 @@
-mod air_alert_requester;
 mod configer;
+mod observer;
 
-use crate::air_alert_requester::AirAlertRequester;
-use crate::configer::Config;
+use configer::Config;
+use observer::Observer;
 
 fn main() {
     let config = Config::new();
-    let air_alert_requester = AirAlertRequester::new(config.get_api_key());
-    println!(
-        "{}",
-        air_alert_requester.is_alert_in_region("9999").unwrap()
-    );
+    let mut observer = Observer::new(config.get_api_key(), config.get_regions_id());
+    observer.poll();
 }

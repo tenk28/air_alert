@@ -1,4 +1,3 @@
-use json::{self, JsonValue};
 use std::fs::File;
 use std::io::Read;
 
@@ -6,19 +5,18 @@ const CONFIG_PATHNAME: &str = "config.json";
 const PLACEHOLDER_API_KEY: &str = "<your api key here>";
 
 const API_KEY_FIELD: &str = "apiKey";
-const REGIONS_TO_OBSERVE_FIELD: &str = "regionsToObserve";
-const REGIONS_ID_FIELD: &str = "regionId";
+const REGION_ID_FIELD: &str = "regionId";
 
 pub struct Config {
     api_key: String,
-    regions_id: Vec<String>,
+    region_id: String,
 }
 
 impl Config {
     pub fn new() -> Self {
         let mut config = Config {
             api_key: String::default(),
-            regions_id: Vec::default(),
+            region_id: String::default(),
         };
         let content = config.read_config();
         config.parse_content(&content);
@@ -29,8 +27,8 @@ impl Config {
         &self.api_key
     }
 
-    pub fn get_regions_id(&self) -> &Vec<String> {
-        &self.regions_id
+    pub fn get_regions_id(&self) -> &String {
+        &self.region_id
     }
 
     fn read_config(&mut self) -> String {
@@ -77,24 +75,11 @@ impl Config {
         }
         self.api_key = api_key_obj.to_string();
 
-        let regions_to_observe = &parsed[REGIONS_TO_OBSERVE_FIELD];
-        if regions_to_observe.is_null() {
-            eprintln!(
-                "Failed to parse content: {} field is null",
-                REGIONS_TO_OBSERVE_FIELD
-            );
+        let region_id_obj = &parsed[REGION_ID_FIELD];
+        if region_id_obj.is_null() {
+            eprintln!("Failed to parse content: {} field is null", REGION_ID_FIELD);
             return;
         }
-        let regions_id_filter_func = |obj: &JsonValue| {
-            if !obj[REGIONS_ID_FIELD].is_null() {
-                Some(obj[REGIONS_ID_FIELD].to_string())
-            } else {
-                None
-            }
-        };
-        self.regions_id = regions_to_observe
-            .members()
-            .filter_map(regions_id_filter_func)
-            .collect();
+        self.region_id = region_id_obj.to_string();
     }
 }
