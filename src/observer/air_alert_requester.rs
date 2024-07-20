@@ -1,3 +1,4 @@
+use log::error;
 use reqwest::{
     self,
     blocking::Client,
@@ -29,7 +30,7 @@ impl AirAlertRequester {
         let authorization_value = match HeaderValue::from_str(&self.api_key) {
             Ok(authorization_value) => authorization_value,
             Err(err) => {
-                eprintln!("Failed to get str from api_key: {}", err);
+                error!("Failed to get str from api_key: {}", err);
                 return None;
             }
         };
@@ -39,21 +40,21 @@ impl AirAlertRequester {
         let response = match client.get(url.as_str()).headers(headers).send() {
             Ok(resp) => resp,
             Err(err) => {
-                eprintln!("Failed to GET {}: {}", url, err);
+                error!("Failed to GET {}: {}", url, err);
                 return None;
             }
         };
 
         let status_code = response.status();
         if status_code != StatusCode::OK {
-            eprintln!("Response error, status code: {}", status_code.as_str());
+            error!("Response error, status code: {}", status_code.as_str());
             return None;
         }
 
         let content = match response.text() {
             Ok(content) => content,
             Err(err) => {
-                eprintln!("Failed to get response text: {}", err);
+                error!("Failed to get response text: {}", err);
                 return None;
             }
         };
@@ -61,14 +62,14 @@ impl AirAlertRequester {
         let parsed = match json::parse(&content) {
             Ok(parsed) => parsed,
             Err(err) => {
-                eprintln!("Failed to parse content: {}", err);
-                eprintln!("content: {}", &content);
+                error!("Failed to parse content: {}", err);
+                error!("content: {}", &content);
                 return None;
             }
         };
 
         if parsed[0][ACTIVE_ALERTS_FIELD].is_null() {
-            eprintln!("Field \"{}\" is null", ACTIVE_ALERTS_FIELD);
+            error!("Field \"{}\" is null", ACTIVE_ALERTS_FIELD);
             return None;
         }
 

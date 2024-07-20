@@ -1,6 +1,7 @@
 mod air_alert_requester;
 
 use air_alert_requester::AirAlertRequester;
+use log::info;
 use std::{thread, time::Duration};
 
 const OBSERVE_DELAY_SECONDS: u64 = 35;
@@ -25,9 +26,9 @@ impl Observer {
                 .is_alert_in_region(self.region_id.as_str())
             {
                 if is_alert {
-                    println!("There is alert in {} region", self.region_id);
+                    info!("There is alert in {} region", self.region_id);
                 } else {
-                    println!("There is no alert in {} region", self.region_id);
+                    info!("There is no alert in {} region", self.region_id);
                 }
 
                 thread::sleep(Duration::from_secs(OBSERVE_DELAY_SECONDS));
