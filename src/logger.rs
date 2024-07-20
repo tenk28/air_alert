@@ -1,4 +1,4 @@
-use flexi_logger::{Duplicate, FileSpec, Logger};
+use flexi_logger::*;
 
 const LOGS_DIRECTORY: &str = "logs";
 
@@ -9,8 +9,14 @@ pub fn init_logger() {
         .unwrap()
         .log_to_file(file_spec)
         .duplicate_to_stderr(Duplicate::Error)
-        .duplicate_to_stdout(Duplicate::Warn)
-        .duplicate_to_stdout(Duplicate::Info)
+        .rotate(
+            Criterion::Age(Age::Day),
+            Naming::TimestampsCustomFormat {
+                current_infix: None,
+                format: "%d-%m-%Y",
+            },
+            Cleanup::KeepLogFiles(7),
+        )
         .format(|writer, now, record| {
             writeln!(
                 writer,
