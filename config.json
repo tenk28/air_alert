@@ -1,0 +1,8 @@
+{
+    "apiKey": "<your api key here>",
+    "regionsToObserve": [
+        {
+            "regionId": 31
+        }
+    ] 
+}
