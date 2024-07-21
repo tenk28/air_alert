@@ -2,8 +2,18 @@
 name = "air_alert"
 version = "0.1.0"
 edition = "2021"
+build = "build.rs"
+
+[[bin]]
+name = "air_alert"
+test = false
+bench = false
+
+[build-dependencies]
+dirs = "5.0.1"
 
 [dependencies]
+clap = "4.5.9"
 flexi_logger = "0.28.5"
 json = "0.12.4"
 log = "0.4.22"

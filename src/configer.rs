@@ -2,7 +2,6 @@ use log::error;
 use std::fs::File;
 use std::io::Read;
 
-const CONFIG_PATHNAME: &str = "config.json";
 const PLACEHOLDER_API_KEY: &str = "<your api key here>";
 
 const API_KEY_FIELD: &str = "apiKey";
@@ -11,13 +10,15 @@ const REGION_ID_FIELD: &str = "regionId";
 pub struct Config {
     api_key: String,
     region_id: String,
+    config_pathname: String,
 }
 
 impl Config {
-    pub fn new() -> Self {
+    pub fn new(config_pathname: &str) -> Self {
         Config {
             api_key: String::default(),
             region_id: String::default(),
+            config_pathname: config_pathname.to_string(),
         }
     }
 
@@ -36,7 +37,7 @@ impl Config {
     }
 
     pub fn parse(&mut self) -> bool {
-        let mut file = match File::open(CONFIG_PATHNAME) {
+        let mut file = match File::open(self.config_pathname.as_str()) {
             Ok(file) => file,
             Err(err) => {
                 error!("Failed to open file: {}", err);

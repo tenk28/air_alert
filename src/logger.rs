@@ -1,10 +1,10 @@
 use flexi_logger::*;
-use std::time::Duration;
+use std::{fs, time::Duration};
 
-const LOGS_DIRECTORY: &str = "logs";
 
-pub fn init_logger() {
-    let file_spec: FileSpec = FileSpec::default().directory(LOGS_DIRECTORY);
+pub fn init_logger(logs_dir: &str) {
+    let file_spec: FileSpec = FileSpec::default().directory(logs_dir);
+    let _ = fs::create_dir_all(logs_dir);
 
     Logger::try_with_env_or_str("info")
         .unwrap()

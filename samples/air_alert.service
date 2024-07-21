@@ -1,0 +1,14 @@
+[Unit]
+Description=AirAlert
+Requires=network.target
+After=systemd-user-sessions.service
+
+[Service]
+Type=simple
+ExecStart={{$binary_pathname}} --config_file {{$config_pathname}} --start_alert_audio {{$start_alert_pathname}} --end_alert_audio {{$end_alert_pathname}} --logs_dir {{$logs_dir}}
+PIDFile=/var/run/air_alert.pid
+User={{$user}}
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
