@@ -7,7 +7,15 @@ use reqwest::{
 };
 
 const AIR_ALERT_MAIN_URI: &str = "https://api.ukrainealarm.com/api/v3/alerts/";
+
 const ACTIVE_ALERTS_FIELD: &str = "activeAlerts";
+const REGION_ENG_NAME_FIELD: &str = "regionEngName";
+
+#[derive(Default)]
+pub struct AirAlertValue {
+    pub region_eng_name: String,
+    pub is_alert: bool,
+}
 
 pub struct AirAlertRequester {
     api_key: String,
@@ -20,7 +28,7 @@ impl AirAlertRequester {
         }
     }
 
-    pub fn is_alert_in_region(&self, region_id: &str) -> Option<bool> {
+    pub fn is_alert_in_region(&self, region_id: &str) -> Option<AirAlertValue> {
         let url = String::from(AIR_ALERT_MAIN_URI) + region_id;
 
         let client = Client::new();
@@ -68,15 +76,28 @@ impl AirAlertRequester {
             }
         };
 
-        if parsed[0][ACTIVE_ALERTS_FIELD].is_null() {
-            error!("Field \"{}\" is null", ACTIVE_ALERTS_FIELD);
-            return None;
+        let is_alert;
+        {
+            if parsed[0][ACTIVE_ALERTS_FIELD].is_null() {
+                error!("Field \"{}\" is null", ACTIVE_ALERTS_FIELD);
+                return None;
+            }
+
+            is_alert = !(parsed[0][ACTIVE_ALERTS_FIELD]).is_empty();
         }
 
-        if (parsed[0][ACTIVE_ALERTS_FIELD]).is_empty() {
-            Some(false)
-        } else {
-            Some(true)
+        let region_eng_name;
+        {
+            if parsed[0][REGION_ENG_NAME_FIELD].is_null() {
+                error!("Field \"{}\" is null", REGION_ENG_NAME_FIELD);
+                return None;
+            }
+            region_eng_name = parsed[0][REGION_ENG_NAME_FIELD].to_string();
         }
+
+        Some(AirAlertValue {
+            region_eng_name,
+            is_alert,
+        })
     }
 }
