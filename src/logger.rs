@@ -1,4 +1,5 @@
 use flexi_logger::*;
+use std::time::Duration;
 
 const LOGS_DIRECTORY: &str = "logs";
 
@@ -8,6 +9,10 @@ pub fn init_logger() {
     Logger::try_with_env_or_str("info")
         .unwrap()
         .log_to_file(file_spec)
+        .write_mode(WriteMode::BufferAndFlushWith(
+            DEFAULT_BUFFER_CAPACITY,
+            Duration::from_secs(10),
+        ))
         .duplicate_to_stderr(Duplicate::Error)
         .rotate(
             Criterion::Age(Age::Day),
