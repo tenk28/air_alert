@@ -13,6 +13,8 @@ pub fn init_logger(logs_dir: &str) {
             DEFAULT_BUFFER_CAPACITY,
             Duration::from_secs(10),
         ))
+        .duplicate_to_stdout(Duplicate::Info)
+        .duplicate_to_stdout(Duplicate::Warn)
         .duplicate_to_stderr(Duplicate::Error)
         .rotate(
             Criterion::Age(Age::Day),

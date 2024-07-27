@@ -6,7 +6,7 @@ use audioer::play_audio;
 use log::{error, info};
 use std::{thread, time::Duration};
 
-const OBSERVE_DELAY_SECONDS: u64 = 35;
+const OBSERVE_DELAY_SECONDS: u64 = 30;
 const PLAY_COUNT: u64 = 3;
 
 pub struct Observer {
@@ -26,16 +26,19 @@ impl Observer {
     ) -> Self {
         let air_alert_requester: AirAlertRequester = AirAlertRequester::new(api_key);
 
-        let is_alert = match air_alert_requester.is_alert_in_region(region_id) {
-            Some(air_alert_value) => {
-                info!("Observing \"{}\" region", air_alert_value.region_eng_name);
-                air_alert_value.is_alert
-            }
-            None => {
-                error!("Failed to get init values of region_id: {}", region_id);
-                false
+        let is_alert = loop {
+            match air_alert_requester.is_alert_in_region(region_id) {
+                Some(air_alert_value) => {
+                    info!("Observing \"{}\" region", air_alert_value.region_eng_name);
+                    break air_alert_value.is_alert;
+                }
+                None => {
+                    error!("Failed to get init values of region_id: {}", region_id);
+                    std::thread::sleep(std::time::Duration::from_secs(1));
+                }
             }
         };
+        
 
         Observer {
             air_alert_requester,
