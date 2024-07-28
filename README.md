@@ -52,3 +52,8 @@ If the command above does not work, you can find the command by visiting the [Uk
 ## Sound samples
 
 To change the audio that announces the start and end of an air alert, replace the `start_air_alert.mp3` and `end_air_alert.mp3` files in the `rsc` directory.
+
+<hr>
+<a href="https://stand-with-ukraine.pp.ua">
+  <img src="https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/banner2-direct.svg">
+</a>
