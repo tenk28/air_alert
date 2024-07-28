@@ -3,11 +3,11 @@ mod audioer;
 
 use air_alert_requester::AirAlertRequester;
 use audioer::play_audio;
-use log::{error, info};
+use log::{error, info, debug};
 use std::{thread, time::Duration};
 
 const OBSERVE_DELAY_SECONDS: u64 = 30;
-const PLAY_COUNT: u64 = 3;
+const PLAY_COUNT: u64 = 7;
 
 pub struct Observer {
     air_alert_requester: AirAlertRequester,
@@ -29,12 +29,12 @@ impl Observer {
         let is_alert = loop {
             match air_alert_requester.is_alert_in_region(region_id) {
                 Some(air_alert_value) => {
-                    info!("Observing \"{}\" region", air_alert_value.region_eng_name);
+                    info!("Observing \"{}\" region, init alert value \"{}\"", air_alert_value.region_eng_name, air_alert_value.is_alert.to_string());
                     break air_alert_value.is_alert;
                 }
                 None => {
                     error!("Failed to get init values of region_id: {}", region_id);
-                    std::thread::sleep(std::time::Duration::from_secs(1));
+                    std::thread::sleep(std::time::Duration::from_secs(5));
                 }
             }
         };
@@ -75,6 +75,7 @@ impl Observer {
                     }
                 }
                 self.is_alert = air_alert_value.is_alert;
+                debug!("Alert status \"{}\" in \"{}\" region", air_alert_value.is_alert.to_string(), air_alert_value.region_eng_name);
             }
             thread::sleep(Duration::from_secs(OBSERVE_DELAY_SECONDS));
         }

@@ -8,7 +8,7 @@ use log::info;
 use logger::init_logger;
 use observer::Observer;
 
-const CONFIG_PATHNAME: &str = "config.json";
+const CONFIG_PATHNAME: &str = "samples/config.json";
 const START_ALERT_AUDIO_PATHNAME: &str = "rsc/start_air_alert.mp3";
 const END_ALERT_AUDIO_PATHNAME: &str = "rsc/end_air_alert.mp3";
 const LOGS_DIR: &str = "logs";
